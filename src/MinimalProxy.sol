@@ -1,17 +1,17 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "../node_modules/@openzeppelin/proxy/Clones.sol";
+import "@openzeppelin/contracts/proxy/Clones.sol";
 import "./ERC20.sol";
 
-contract ContractFactory is ReentrancyGuard {
+contract ContractFactory {
     address private immutable ERC20ADDRESS;
     uint8 public constant FEE_MANAGER_CHARGE = 3;
     uint8 public constant REFERAL_MANAGER_CHARGE = 2;
 
     using Clones for address;
-    
-    address private owner;
+
+    address public owner;
     address public addressGenerated;
     uint8 public decimals = 4;
     uint8 public currentRoleCharge = FEE_MANAGER_CHARGE;
@@ -39,7 +39,9 @@ contract ContractFactory is ReentrancyGuard {
      * @dev this function switches role, can be executed by the owner only.
      */
     function switchRole() external onlyOwner {
+        uint8 prevRole = currentRoleCharge;
         currentRoleCharge = currentRoleCharge == FEE_MANAGER_CHARGE ? REFERAL_MANAGER_CHARGE : FEE_MANAGER_CHARGE;
+        emit ModeSwitched(prevRole, currentRoleCharge);
     }
 
     /**
@@ -60,5 +62,6 @@ contract ContractFactory is ReentrancyGuard {
         coin.initialize(_totalSupply, _name, _symbol);
         coin.transfer(owner, ((_totalSupply) * (charge)) / 10 ** (decimals));
         coin.transferOwnership(msg.sender);
+        emit CloneCreated(address(this), deployedAddress);
     }
 }
