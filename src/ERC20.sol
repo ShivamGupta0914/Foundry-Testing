@@ -1,9 +1,7 @@
-
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 import "./IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-
 
 contract Coins is IERC20, Initializable {
     uint256 private tokenSupply;
@@ -13,6 +11,7 @@ contract Coins is IERC20, Initializable {
     mapping(address => uint256) private tokenBalance;
     mapping(address => mapping(address => uint256)) private approvalBalance;
 
+    // modifier 
     function initialize(uint256 _totalSupply, string memory _name, string memory _symbol) external initializer {
         tokenSupply = _totalSupply;
         tokenName = _name;
@@ -36,7 +35,6 @@ contract Coins is IERC20, Initializable {
         tokenBalance[_owner] = 0;
         tokenBalance[_newOwner] = tokensAvailabeAtOldOwner;
         _owner = _newOwner;
-        // return true;
     }
 
     function mint(address account, uint256 amount) external {
